@@ -1,71 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:text_to_speech_flutter/tts.dart';
+import 'package:text_to_speech_flutter/core/constants/design_system.dart';
+import 'package:text_to_speech_flutter/core/navigation.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      color: DesignSystem.colors.primary,
       theme: ThemeData(
-        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const Tts(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+          // fontFamily: GoogleFonts.spaceGrotesk().fontFamily,
+          primaryColor: DesignSystem.colors.primary,
+          colorScheme:
+          ColorScheme.fromSeed(seedColor: DesignSystem.colors.primary),
+          scaffoldBackgroundColor: DesignSystem.colors.background,
+          textTheme: const TextTheme().apply(
+            bodyColor: DesignSystem.colors.textDetail,
+            displayColor: DesignSystem.colors.textDetail,
+          )),
+      routes: Navigation.routing.routes,
+      initialRoute: Navigation.routing.home,
     );
   }
 }

@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_text_to_speech/cloud_text_to_speech.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:text_to_speech_flutter/tts_api.dart';
 
 class Tts extends StatefulWidget {
@@ -19,7 +17,7 @@ class _TtsState extends State<Tts> {
   @override
   void initState() {
 
-    TtsGoogle.init(apiKey: "", withLogs: true);
+    TtsGoogle.init(apiKey: "AIzaSyCVOtglUcy3xRxk-x1qI2m8e-JmJ_RZZJU", withLogs: true);
 
     super.initState();
   }
