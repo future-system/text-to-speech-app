@@ -37,7 +37,6 @@ class _HomePageState extends State<HomePage> {
             selectedPage: _selectedPage,
             onItemTapped: _onItemTapped,
           ),
-          const VerticalDivider(thickness: 1, width: 1),
           Expanded(
             child: Center(
               child: _pages[_selectedPage],
