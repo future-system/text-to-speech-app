@@ -3,5 +3,5 @@ sealed class Endpoints {
 }
 
 class _Endpoints {
-  final baseUrl = "https://parkshare-production.up.railway.app/";
+  final baseUrl = "";
 }
