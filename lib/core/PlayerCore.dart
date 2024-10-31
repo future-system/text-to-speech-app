@@ -1,12 +1,25 @@
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:text_to_speech_flutter/core/constants/util_recorded.dart';
 
 class PlayerCore {
   final _player = AudioPlayer();
 
   void playBytes(Uint8List audio) {
     _player.play(BytesSource(audio));
+  }
+
+  void saveAudio(Uint8List audio) {
+    saveRecordedFile(audio);
+  }
+
+  Future<Uint8List> readAudio(String path) async {
+    return await readRecordedFile(path);
+  }
+
+  void playScr() async {
+    playBytes(await readRecordedFile("${await directoryRecordedPath()}teste.mp3"));
   }
 
   void pause() {

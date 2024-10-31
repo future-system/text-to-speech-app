@@ -12,7 +12,6 @@ class TtsCoreGoogle {
   final TtsVoicesBloc voicesBloc = TtsVoicesBloc();
   final DropdownGenericBloc<VoiceGoogle> voiceChoosenBloc = DropdownGenericBloc<VoiceGoogle>();
 
-
   TtsCoreGoogle(String apiKey) {
     TtsGoogle.init(apiKey: apiKey, withLogs: true);
     initVoices();
@@ -31,7 +30,7 @@ class TtsCoreGoogle {
   }
 
   Future<VoiceGoogle> getVoice(TTsGoogleParamLanguage language) async {
-    if(voicesBloc.state.voices == null){
+    if (voicesBloc.state.voices == null) {
       throw Exception("Voices not initialized");
     }
 
@@ -48,7 +47,7 @@ class TtsCoreGoogle {
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
     TTsGoogleParamLanguage language = TTsGoogleParamLanguage.ptBR,
   }) async {
-    if(voiceChoosenBloc.state == null){
+    if (voiceChoosenBloc.state == null) {
       throw Exception("Voice not initialized");
     }
 
@@ -69,6 +68,17 @@ class TtsCoreGoogle {
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
   }) async {
     player.playBytes((await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
+  }
+
+  void record(
+    String text, {
+    TTsGoogleParamLanguage language = TTsGoogleParamLanguage.ptBR,
+    RateTtsCoreGoogle rate = RateTtsCoreGoogle.slow,
+    PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
+  }) async {
+    player.saveAudio((await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
+
+    player.playScr();
   }
 
   Future<AudioSuccessGoogle> convertTts(TtsParamsGoogle ttsParams) async {

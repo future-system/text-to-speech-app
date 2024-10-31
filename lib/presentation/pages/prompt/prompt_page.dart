@@ -15,7 +15,7 @@ class PromptPage extends StatefulWidget {
 }
 
 class _PromptPageState extends State<PromptPage> {
-  final TtsCoreGoogle tts = TtsCoreGoogle("");
+  final TtsCoreGoogle tts = TtsCoreGoogle("AIzaSyCVOtglUcy3xRxk-x1qI2m8e-JmJ_RZZJU");
   final TextEditingController controller = TextEditingController(text: "Olá, tudo bem?");
 
 
@@ -39,7 +39,7 @@ class _PromptPageState extends State<PromptPage> {
             ),
             TextFormField(
               controller: controller,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               decoration: const InputDecoration(
                 hintText: 'Escreva um texto a ser falado',
               ),
@@ -55,7 +55,7 @@ class _PromptPageState extends State<PromptPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          tts.talk(controller.text);
+          tts.record(controller.text);
         },
         child: const Icon(Icons.volume_up),
       ),
