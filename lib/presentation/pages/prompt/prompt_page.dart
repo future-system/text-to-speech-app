@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:text_to_speech_flutter/core/constants/design_system.dart';
 import 'package:text_to_speech_flutter/core/tts_bloc.dart';
+import 'package:text_to_speech_flutter/presentation/components/custom_form_field.dart';
 import 'package:text_to_speech_flutter/presentation/components/dropdown_button.dart';
 
 import '../../../core/tts_core_google.dart';
@@ -15,9 +16,9 @@ class PromptPage extends StatefulWidget {
 }
 
 class _PromptPageState extends State<PromptPage> {
-  final TtsCoreGoogle tts = TtsCoreGoogle("AIzaSyCVOtglUcy3xRxk-x1qI2m8e-JmJ_RZZJU");
-  final TextEditingController controller = TextEditingController(text: "Olá, tudo bem?");
-
+  final TtsCoreGoogle tts = initTts("AIzaSyCVOtglUcy3xRxk-x1qI2m8e-JmJ_RZZJU");
+  final TextEditingController controller = TextEditingController();
+  double rangeValue = 0.5;
 
   Widget body() {
     return BlocBuilder<TtsVoicesBloc, TtsVoicesEvent>(
@@ -27,24 +28,78 @@ class _PromptPageState extends State<PromptPage> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return ListView(
-          children: [
-            SizedBox(
-              height: 50,
-              child: DropdownButtonExample<VoiceGoogle>(
-                list: tts.voicesBloc.state.voices!.voices,
-                bloc: tts.voiceChoosenBloc,
-                map: (value) => DropdownMenuItem(value: value, child: Text('${value.name} - ${value.locale.name} - ${value.locale.code}')),
+        return Flexible(
+          flex: 1,
+          child: Card(
+            color: DesignSystem.colors.secondary,
+            margin: const EdgeInsets.all(16),
+            elevation: 4,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomFormField(
+                    controller: controller,
+                    hint: "Escreva o texto para ser pronunciado",
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          child: CustomDropdown<VoiceGoogle>(
+                            hint: "Selecione uma voz",
+                            list: tts.voicesBloc.state.voices!.voices,
+                            bloc: tts.voiceChoosenBloc,
+                            map: (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text('${value.name}'),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16), // Espaço entre os Dropdowns
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          child: CustomDropdown<VoiceGoogle>(
+                            hint: "Selecione uma línguia",
+                            list: tts.voicesBloc.state.voices!.voices,
+                            bloc: tts.voiceChoosenBloc,
+                            map: (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text('${value.locale.name} - ${value.locale.code}'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text("Velocidade"),
+                  SizedBox(
+                    width: 600,
+                    child: Slider(
+                      activeColor: DesignSystem.colors.primary,
+                      value: rangeValue,
+                      min: 0.0,
+                      max: 1.0,
+                      divisions: 2,
+                      onChanged: (value) {
+                        setState(() {
+                          rangeValue = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-            TextFormField(
-              controller: controller,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                hintText: 'Escreva um texto a ser falado',
-              ),
-            ),
-          ],
+          ),
         );
       },
     );
@@ -55,7 +110,7 @@ class _PromptPageState extends State<PromptPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          tts.record(controller.text);
+          tts.talk(controller.value.text);
         },
         child: const Icon(Icons.volume_up),
       ),
