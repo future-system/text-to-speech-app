@@ -8,6 +8,14 @@ import 'package:text_to_speech_flutter/presentation/components/dropdown_generic_
 
 import 'PlayerCore.dart';
 
+
+TtsCoreGoogle? _ttsCoreGoogle;
+
+TtsCoreGoogle initTts(String key){
+  _ttsCoreGoogle ??= TtsCoreGoogle(key);
+  return _ttsCoreGoogle!;
+}
+
 class TtsCoreGoogle {
   static bool initialized = false;
   final PlayerCore player = PlayerCore();
@@ -73,7 +81,7 @@ class TtsCoreGoogle {
   void talk(
     String text, {
     TTsGoogleParamLanguage language = TTsGoogleParamLanguage.ptBR,
-    RateTtsCoreGoogle rate = RateTtsCoreGoogle.slow,
+    RateTtsCoreGoogle rate = RateTtsCoreGoogle.fast,
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
   }) async {
     player.playBytes((await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
