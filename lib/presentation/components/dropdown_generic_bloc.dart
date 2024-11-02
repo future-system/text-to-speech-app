@@ -5,4 +5,6 @@ class DropdownGenericBloc<T> extends Cubit<T?> {
 
   void choose(T value) => emit(value);
 
+  void clear() => emit(null);
+
 }

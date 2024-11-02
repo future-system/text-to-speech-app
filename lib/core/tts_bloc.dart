@@ -1,37 +1,35 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_text_to_speech/cloud_text_to_speech.dart';
+import 'package:text_to_speech_flutter/core/voice_core.dart';
 
-class TtsVoiceBloc extends Cubit<VoiceGoogle?>{
-  TtsVoiceBloc() : super(null);
+class TtsVoicesBloc extends Cubit<TtsVoicesState> {
+  TtsVoicesBloc() : super(TtsVoicesLoadingState());
 
-  void chooseVoice(VoiceGoogle voice) => emit(voice);
+  void setVoice(List<VoiceGoogle> voices) => emit(TtsVoicesSuccessState(VoiceCore(voices: voices)));
+
+  void setError(String message) => emit(TtsVoicesErrorState(message, VoiceCore.empty()));
 }
 
-class TtsVoicesBloc extends Cubit<TtsVoicesEvent>{
-  TtsVoicesBloc() : super(TtsVoicesLoadingEvent());
+//class TtsVoicesEvent{}
 
-  void setVoice(VoicesSuccessGoogle voices) => emit(TtsVoicesSuccessEvent(voices));
+//class TtsVoicesLoadingEvent extends TtsVoicesEvent{}
 
-  void setError(String message) => emit(TtsVoicesErrorEvent(message, null));
+class TtsVoicesState {
+  final VoiceCore voices;
+
+  TtsVoicesState(this.voices);
 }
 
-class TtsVoicesEvent{
-  final VoicesSuccessGoogle? voices;
-
-  TtsVoicesEvent(this.voices);
+class TtsVoicesSuccessState extends TtsVoicesState {
+  TtsVoicesSuccessState(super.voices);
 }
 
-class TtsVoicesSuccessEvent extends TtsVoicesEvent{
-  TtsVoicesSuccessEvent(super.voices);
+class TtsVoicesLoadingState extends TtsVoicesState {
+  TtsVoicesLoadingState() : super(VoiceCore.empty());
 }
 
-class TtsVoicesLoadingEvent extends TtsVoicesEvent{
-  TtsVoicesLoadingEvent() : super(null);
-}
-
-class TtsVoicesErrorEvent extends TtsVoicesEvent{
+class TtsVoicesErrorState extends TtsVoicesState {
   final String message;
 
-  TtsVoicesErrorEvent(this.message, super.voices);
+  TtsVoicesErrorState(this.message, super.voices);
 }
-
