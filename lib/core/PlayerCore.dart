@@ -10,16 +10,20 @@ class PlayerCore {
     _player.play(BytesSource(audio));
   }
 
-  void saveAudio(Uint8List audio) {
-    saveRecordedFile(audio);
+  Future<String> saveAudio(String nameAudio, Uint8List audio) async {
+    return await saveRecordedFile(nameAudio, audio);
   }
 
   Future<Uint8List> readAudio(String path) async {
     return await readRecordedFile(path);
   }
 
-  void playScr() async {
-    playBytes(await readRecordedFile("${await directoryRecordedPath()}teste.mp3"));
+  void playScrComplete(String name) async {
+    playBytes(await readRecordedFile("${await directoryRecordedPath()}$name"));
+  }
+
+  void playScr(String path) async {
+    playBytes(await readAudio(path));
   }
 
   void pause() {

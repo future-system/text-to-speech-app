@@ -2,6 +2,7 @@ import 'package:cloud_text_to_speech/cloud_text_to_speech.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:text_to_speech_flutter/core/constants/design_system.dart';
+import 'package:text_to_speech_flutter/core/constants/util_file.dart';
 import 'package:text_to_speech_flutter/core/tts_bloc.dart';
 import 'package:text_to_speech_flutter/presentation/components/custom_form_field.dart';
 import 'package:text_to_speech_flutter/presentation/components/dropdown_button.dart';
@@ -33,86 +34,83 @@ class _PromptPageState extends State<PromptPage> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Flexible(
-          flex: 1,
-          child: Card(
-            color: DesignSystem.colors.secondary,
-            margin: const EdgeInsets.all(16),
-            elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+        return Card(
+          color: DesignSystem.colors.secondary,
+          margin: const EdgeInsets.all(16),
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
 
 
-                  CustomFormField(
-                    controller: controller,
-                    hint: "Escreva o texto para ser pronunciado",
-                  ),
+                CustomFormField(
+                  controller: controller,
+                  hint: "Escreva o texto para ser pronunciado",
+                ),
 
-                  const SizedBox(height: 16), // Espaço entre os Dropdowns
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: CustomDropdown<TTsGoogleParamLanguage>(
-                          list: tts.voicesBloc.state.voices.voices.keys.toList(),
-                          hint: "Selecione uma voz",
-                          bloc: langBloc,
-                          onChanged: (value) => tts.voiceChoosenBloc.clear(),
-                          map: (value) => DropdownMenuItem(value: value, child: Text(value.getLanguage())),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 40,
-                    child: BlocBuilder<DropdownGenericBloc<TTsGoogleParamLanguage>, TTsGoogleParamLanguage?>(
+                const SizedBox(height: 16), // Espaço entre os Dropdowns
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: CustomDropdown<TTsGoogleParamLanguage>(
+                        list: tts.voicesBloc.state.voices.voices.keys.toList(),
+                        hint: "Selecione uma voz",
                         bloc: langBloc,
-                        builder: (context, state) {
-                          return BlocBuilder<DropdownGenericBloc<TtsVoiceCore>, TtsVoiceCore?>(
-                              bloc: tts.voiceChoosenBloc,
-                              builder: (context, state) {
-                                final List<TtsVoiceCore> list = tts.voicesBloc.state.voices.voices[langBloc.state] ?? [];
-                                if (langBloc.state == null || list.isEmpty) {
-                                  return const SizedBox();
-                                }
-
-                                return SizedBox(
-                                    height: 50,
-                                    child: CustomDropdown<TtsVoiceCore>(
-                                      list: list,
-                                      hint: "Selecione uma voz",
-                                      bloc: tts.voiceChoosenBloc,
-                                      map: (value) => DropdownMenuItem(value: value, child: Text(value.name)),
-                                    ));
-                              });
-                        }),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text("Velocidade"),
-                  SizedBox(
-                    width: 600,
-                    child: Slider(
-                      activeColor: DesignSystem.colors.primary,
-                      value: rangeValue,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 2,
-                      onChanged: (value) {
-                        setState(() {
-                          rangeValue = value;
-                        });
-                      },
+                        onChanged: (value) => tts.voiceChoosenBloc.clear(),
+                        map: (value) => DropdownMenuItem(value: value, child: Text(value.getLanguage())),
+                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 40,
+                  child: BlocBuilder<DropdownGenericBloc<TTsGoogleParamLanguage>, TTsGoogleParamLanguage?>(
+                      bloc: langBloc,
+                      builder: (context, state) {
+                        return BlocBuilder<DropdownGenericBloc<TtsVoiceCore>, TtsVoiceCore?>(
+                            bloc: tts.voiceChoosenBloc,
+                            builder: (context, state) {
+                              final List<TtsVoiceCore> list = tts.voicesBloc.state.voices.voices[langBloc.state] ?? [];
+                              if (langBloc.state == null || list.isEmpty) {
+                                return const SizedBox();
+                              }
+
+                              return SizedBox(
+                                  height: 50,
+                                  child: CustomDropdown<TtsVoiceCore>(
+                                    list: list,
+                                    hint: "Selecione uma voz",
+                                    bloc: tts.voiceChoosenBloc,
+                                    map: (value) => DropdownMenuItem(value: value, child: Text(value.name)),
+                                  ));
+                            });
+                      }),
+                ),
+                const SizedBox(height: 16),
+                const Text("Velocidade"),
+                SizedBox(
+                  width: 600,
+                  child: Slider(
+                    activeColor: DesignSystem.colors.primary,
+                    value: rangeValue,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 2,
+                    onChanged: (value) {
+                      setState(() {
+                        rangeValue = value;
+                      });
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );
@@ -139,8 +137,7 @@ class _PromptPageState extends State<PromptPage> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Escolha uma voz")));
             return;
           }
-
-          tts.talk(controller.value.text);
+          tts.record(controller.value.text);
         },
         child: const Icon(Icons.volume_up),
       ),

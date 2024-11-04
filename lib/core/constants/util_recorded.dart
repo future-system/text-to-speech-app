@@ -2,21 +2,14 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:text_to_speech_flutter/core/constants/util_file.dart';
 
 Future<String> directoryRecordedPath() async {
-  var directory = await  getApplicationDocumentsDirectory();
-  var directoryPath = directory.path;
-  var file = Directory("$directoryPath\\records\\");
-
-  if(!file.existsSync()){
-    file.createSync(recursive: true);
-  }
-
-  return file.path;
+  return directoryPath("recorded");
 }
 
-Future<String> saveRecordedFile(Uint8List audio) async {
-  final file = File("${await directoryRecordedPath()}teste.mp3");//todo
+Future<String> saveRecordedFile(String nameAudio, Uint8List audio) async {
+  final file = File("${await directoryRecordedPath()}$nameAudio");
   await file.writeAsBytes(audio);
   return file.path;
 }

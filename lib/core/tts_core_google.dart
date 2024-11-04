@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cloud_text_to_speech/cloud_text_to_speech.dart';
@@ -8,10 +9,9 @@ import 'package:text_to_speech_flutter/presentation/components/dropdown_generic_
 
 import 'PlayerCore.dart';
 
-
 TtsCoreGoogle? _ttsCoreGoogle;
 
-TtsCoreGoogle initTts(String key){
+TtsCoreGoogle initTts(String key) {
   _ttsCoreGoogle ??= TtsCoreGoogle(key);
   return _ttsCoreGoogle!;
 }
@@ -23,7 +23,7 @@ class TtsCoreGoogle {
   final DropdownGenericBloc<TtsVoiceCore> voiceChoosenBloc = DropdownGenericBloc<TtsVoiceCore>();
 
   TtsCoreGoogle(String apiKey) {
-    if(!initialized) TtsGoogle.init(apiKey: apiKey, withLogs: true);
+    if (!initialized) TtsGoogle.init(apiKey: apiKey, withLogs: true);
     initialized = true;
     initVoices();
   }
@@ -93,9 +93,9 @@ class TtsCoreGoogle {
     RateTtsCoreGoogle rate = RateTtsCoreGoogle.slow,
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
   }) async {
-    player.saveAudio((await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
+    final audioName = await player.saveAudio("${text.toLowerCase().replaceAll(" ", "_").substring(0, min(30, text.length))}__${language.getLanguage()}.mp3", (await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
 
-    player.playScr();
+    player.playScr(audioName);
   }
 
   Future<AudioSuccessGoogle> convertTts(TtsParamsGoogle ttsParams) async {
