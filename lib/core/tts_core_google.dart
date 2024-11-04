@@ -2,12 +2,14 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cloud_text_to_speech/cloud_text_to_speech.dart';
+import 'package:cron/cron.dart';
 import 'package:text_to_speech_flutter/core/constants/tts_core_google_params_language.dart';
 import 'package:text_to_speech_flutter/core/tts_bloc.dart';
 import 'package:text_to_speech_flutter/core/voice_core.dart';
 import 'package:text_to_speech_flutter/presentation/components/dropdown_generic_bloc.dart';
 
 import 'PlayerCore.dart';
+import 'cron_core.dart';
 
 TtsCoreGoogle? _ttsCoreGoogle;
 
@@ -21,6 +23,8 @@ class TtsCoreGoogle {
   final PlayerCore player = PlayerCore();
   final TtsVoicesBloc voicesBloc = TtsVoicesBloc();
   final DropdownGenericBloc<TtsVoiceCore> voiceChoosenBloc = DropdownGenericBloc<TtsVoiceCore>();
+  final CronCore _cron = CronCore();
+
 
   TtsCoreGoogle(String apiKey) {
     if (!initialized) TtsGoogle.init(apiKey: apiKey, withLogs: true);
@@ -62,11 +66,9 @@ class TtsCoreGoogle {
     voiceChoosenBloc.choose(voice);
   }
 
-  Future<TtsParamsGoogle> createParamsToSpeech(
-    String text, {
+  Future<TtsParamsGoogle> createParamsToSpeech(String text, {
     RateTtsCoreGoogle rate = RateTtsCoreGoogle.slow,
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
-    TTsGoogleParamLanguage language = TTsGoogleParamLanguage.ptBR,
   }) async {
     return TtsParamsGoogle(
       voice: await getVoice(),
@@ -78,24 +80,35 @@ class TtsCoreGoogle {
     );
   }
 
-  void talk(
-    String text, {
-    TTsGoogleParamLanguage language = TTsGoogleParamLanguage.ptBR,
+  void talk(String text, {
     RateTtsCoreGoogle rate = RateTtsCoreGoogle.fast,
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
   }) async {
     player.playBytes((await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
   }
 
-  void record(
-    String text, {
-    TTsGoogleParamLanguage language = TTsGoogleParamLanguage.ptBR,
+  Future<String> record(String text, {
     RateTtsCoreGoogle rate = RateTtsCoreGoogle.slow,
     PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
   }) async {
-    final audioName = await player.saveAudio("${text.toLowerCase().replaceAll(" ", "_").substring(0, min(30, text.length))}__${language.getLanguage()}.mp3", (await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
+    final audioName = await player.saveAudio(_createAudioName(text), (await convertTts(await createParamsToSpeech(text, rate: rate, pitch: pitch))).audio.buffer.asUint8List());
 
     player.playScr(audioName);
+
+    return audioName;
+  }
+
+  void cron(String text, {
+    List<int>? seconds,
+    List<int>? minutes,
+    List<int>? hours,
+    List<int>? days,
+    List<int>? months,
+    List<int>? weekdays,
+    RateTtsCoreGoogle rate = RateTtsCoreGoogle.slow,
+    PitchTtsCoreGoogle pitch = PitchTtsCoreGoogle.pitchDefault,
+  }) async {
+    _cron.create(Schedule(seconds: seconds, minutes: minutes, hours: hours, days: days, months: months, weekdays: weekdays),  await record(text, pitch: pitch, rate: rate), menssage: text);
   }
 
   Future<AudioSuccessGoogle> convertTts(TtsParamsGoogle ttsParams) async {
@@ -104,6 +117,10 @@ class TtsCoreGoogle {
 
   Future<Uint8List> convertTtsToAudioBytes(TtsParamsGoogle ttsParams) async {
     return (await convertTts(ttsParams)).audio.buffer.asUint8List();
+  }
+
+  String _createAudioName(String text) {
+    return "${text.toLowerCase().replaceAll(" ", "_").substring(0, min(30, text.length))}__${voiceChoosenBloc.state?.locale.code ?? "pt-BR"}.mp3";
   }
 }
 

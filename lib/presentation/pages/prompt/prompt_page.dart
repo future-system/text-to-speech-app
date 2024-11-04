@@ -1,6 +1,8 @@
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:text_to_speech_flutter/core/constants/design_system.dart';
+import 'package:text_to_speech_flutter/core/cron_core.dart';
 import 'package:text_to_speech_flutter/core/tts_bloc.dart';
 import 'package:text_to_speech_flutter/presentation/components/custom_form_field.dart';
 import 'package:text_to_speech_flutter/presentation/components/dropdown_button.dart';
@@ -121,6 +123,7 @@ class _PromptPageState extends State<PromptPage> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,7 +138,9 @@ class _PromptPageState extends State<PromptPage> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Escolha uma voz")));
             return;
           }
-          tts.record(controller.value.text);
+
+
+          tts.talk(controller.text);
         },
         child: const Icon(Icons.volume_up),
       ),
