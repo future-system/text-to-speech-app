@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:text_to_speech_flutter/core/constants/design_system.dart';
 import 'package:text_to_speech_flutter/core/cron_core.dart';
 import 'package:text_to_speech_flutter/core/tts_bloc.dart';
+import 'package:text_to_speech_flutter/data/models/history_model.dart';
 import 'package:text_to_speech_flutter/presentation/components/custom_form_field.dart';
 import 'package:text_to_speech_flutter/presentation/components/dropdown_button.dart';
 import 'package:text_to_speech_flutter/presentation/components/dropdown_generic_bloc.dart';
+import 'package:text_to_speech_flutter/presentation/pages/history/history_cubit.dart';
 
 import '../../../core/constants/tts_core_google_params_language.dart';
 import '../../../core/tts_core_google.dart';
@@ -25,6 +27,9 @@ class _PromptPageState extends State<PromptPage> {
 
   final DropdownGenericBloc<TTsGoogleParamLanguage> langBloc = DropdownGenericBloc<TTsGoogleParamLanguage>();
   double rangeValue = 0.5;
+
+
+  late final HistoryCubit historyCubit;
 
   Widget body() {
     return BlocBuilder<TtsVoicesBloc, TtsVoicesState>(
@@ -118,8 +123,8 @@ class _PromptPageState extends State<PromptPage> {
   @override
   void initState() {
     super.initState();
+    historyCubit = context.read<HistoryCubit>();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +163,8 @@ class _PromptPageState extends State<PromptPage> {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Center(child:  Text("Escolha uma voz")), backgroundColor: DesignSystem.colors.error,));
                 return;
               }
+
+              historyCubit.insert(HistoryModel(content: controller.text, date: DateTime.now()));
 
               tts.talk(controller.text);
             },
