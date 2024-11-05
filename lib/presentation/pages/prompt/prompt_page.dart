@@ -31,7 +31,7 @@ class _PromptPageState extends State<PromptPage> {
       bloc: tts.voicesBloc,
       builder: (context, state) {
         if (state.runtimeType == TtsVoicesLoadingState) {
-          return const Center(child: CircularProgressIndicator());
+          return  Center(child: CircularProgressIndicator(color: DesignSystem.colors.textDetail,));
         }
 
         return Card(
@@ -44,14 +44,11 @@ class _PromptPageState extends State<PromptPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
-
                 CustomFormField(
                   controller: controller,
                   hint: "Escreva o texto para ser pronunciado",
                 ),
-
-                const SizedBox(height: 16), // Espaço entre os Dropdowns
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -127,22 +124,46 @@ class _PromptPageState extends State<PromptPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (langBloc.state == null) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Escolha um idioma")));
-            return;
-          }
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            backgroundColor: DesignSystem.colors.secondary,
+            onPressed: () {
+              if (langBloc.state == null) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Center(child:  Text("Escolha um idioma")), backgroundColor: DesignSystem.colors.error,));
+                return;
+              }
 
-          if (tts.voiceChoosenBloc.state == null) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Escolha uma voz")));
-            return;
-          }
+              if (tts.voiceChoosenBloc.state == null) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Center(child:  Text("Escolha uma voz")), backgroundColor: DesignSystem.colors.error,));
+                return;
+              }
 
+              tts.record(controller.text);
+            },
+            child: Icon(Icons.download, color: DesignSystem.colors.textDetail),
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            backgroundColor: DesignSystem.colors.secondary,
+            onPressed: () {
+              if (langBloc.state == null) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Center(child:  Text("Escolha um idioma")), backgroundColor: DesignSystem.colors.error,));
+                return;
+              }
 
-          tts.talk(controller.text);
-        },
-        child: const Icon(Icons.volume_up),
+              if (tts.voiceChoosenBloc.state == null) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Center(child:  Text("Escolha uma voz")), backgroundColor: DesignSystem.colors.error,));
+                return;
+              }
+
+              tts.talk(controller.text);
+            },
+            child:  Icon(Icons.volume_up, color: DesignSystem.colors.textDetail,),
+          ),
+        ],
       ),
       body: body(),
     );
