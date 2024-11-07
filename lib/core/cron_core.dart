@@ -84,6 +84,8 @@ class CronCore {
     _crons = jsonDecode(((await createFileIfNotExistsCronJson()).readAsStringSync()));
 
     for (final cron in _crons["crons"]) {
+      print("${cron["schedule"]}\n->${cron["file"]}");
+
       schedule(cron["schedule"], () async {
         final file = File(cron["file"]);
 

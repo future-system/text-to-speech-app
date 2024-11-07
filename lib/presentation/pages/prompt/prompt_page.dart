@@ -11,6 +11,7 @@ import 'package:text_to_speech_flutter/presentation/components/dropdown_generic_
 import 'package:text_to_speech_flutter/presentation/pages/history/history_cubit.dart';
 
 import '../../../core/constants/tts_core_google_params_language.dart';
+import '../../../core/core.dart';
 import '../../../core/tts_core_google.dart';
 import '../../../core/voice_core.dart';
 
@@ -22,7 +23,6 @@ class PromptPage extends StatefulWidget {
 }
 
 class _PromptPageState extends State<PromptPage> {
-  final TtsCoreGoogle tts = TtsCoreGoogle("AIzaSyCVOtglUcy3xRxk-x1qI2m8e-JmJ_RZZJU");
   final TextEditingController controller = TextEditingController(text: "Olá, tudo bem?");
 
   final DropdownGenericBloc<TTsGoogleParamLanguage> langBloc = DropdownGenericBloc<TTsGoogleParamLanguage>();
